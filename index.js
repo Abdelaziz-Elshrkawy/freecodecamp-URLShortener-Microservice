@@ -1,13 +1,14 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser')
-const app = express();
-const validating = require('valid-url')
-const mongoose = require('mongoose')
-const idGenerator = require('generate-unique-id');
-const {check,} = require('express-validator')
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import validating from 'valid-url';
+import mongoose from 'mongoose';
+import idGenerator from 'generate-unique-id';
+import urlExist from 'url-exist';
 
+dotenv.config();
+const app = express();
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -50,7 +51,7 @@ app.get('/api/hello', function(req, res) {
 app.post('/api/shorturl', async (req, res) => {
   const url = req.body.url
   //url formate validator 
-  if (validating.isUri(url) === undefined) {
+  if (validating.isUri(url) === undefined || await urlExist(url) === false) {
     res.json({ error: 'invalid url' })
   } else {
     // preventing repeated url
